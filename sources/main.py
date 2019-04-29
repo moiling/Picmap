@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtGui
 
-from mainWindow import Ui_MainWindow
+from sources.mainWindow import Ui_MainWindow
 
 
 class TestWindow(Ui_MainWindow, QMainWindow):
