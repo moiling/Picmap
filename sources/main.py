@@ -7,10 +7,10 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtGui
 
-from sources.mainWindow import Ui_MainWindow
+from sources.ui.mainWindow import Ui_MainWindow
 
 
-class TestWindow(Ui_MainWindow, QMainWindow):
+class MainWindow(Ui_MainWindow, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -55,6 +55,6 @@ class TestWindow(Ui_MainWindow, QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    test = TestWindow()
+    test = MainWindow()
     test.show()
     sys.exit(app.exec_())

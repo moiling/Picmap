@@ -1,0 +1,22 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+## 地点转坐标
+# GET https://restapi.amap.com/v3/geocode/geo?key=c35692f8b41d4c3444ad3a321e4fe474&address=华南理工
+# Accept: application/json
+
+## 坐标转地点
+# GET https://restapi.amap.com/v3/geocode/regeo?key=c35692f8b41d4c3444ad3a321e4fe474&location=113.407890,23.049917
+# Accept: application/json
+
+## 步行规划，同样还有其他出行方式（可以获得时间和距离）
+# GET https://restapi.amap.com/v3/direction/walking?origin=116.434307,39.90909&destination=116.434446,39.90816&key=c35692f8b41d4c3444ad3a321e4fe474
+# Accept: application/json
+
+## 输入提示
+GET https://restapi.amap.com/v3/assistant/inputtips?keywords=华南理工&key=c35692f8b41d4c3444ad3a321e4fe474
+Accept: application/json
