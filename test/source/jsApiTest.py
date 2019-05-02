@@ -5,7 +5,9 @@ import sys
 
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWidgets import QApplication, QMainWindow
-from sources.ui.jsApiTestWindow import Ui_TestWindow
+
+from test.source.ui.jsApiTestWindow import Ui_TestWindow
+
 app, browser = None, None
 
 
@@ -30,7 +32,7 @@ class TestWindow(Ui_TestWindow, QMainWindow):
         self.webEngineView.page().setWebChannel(self.channel)  # 在浏览器中设置该频道
 
         # 加载js
-        self.webEngineView.setHtml(open(os.path.dirname(os.path.dirname(__file__)) + '/resources/web/jsApiTest.html')
+        self.webEngineView.setHtml(open(os.path.dirname(os.path.dirname(__file__)) + '/resource/web/jsApiTest.html')
                                    .read())
 
         self.pushButton.clicked.connect(self.on_click)
