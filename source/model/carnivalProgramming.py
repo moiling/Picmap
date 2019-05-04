@@ -53,9 +53,38 @@ class Carnival:
         self.stay_time = stay_time
         self.end_time = end_time
 
+    # 可以删了的方法
+    def programming_without_start(self):
+        """
+        g1(x)的方式，没有出发点限制
+        这个方法可以没有，用户自己设置i=0的情况就好了，主要是time[0][:]=time[:][0]=全0，说明每一个点都可以成为门，即可
+        设这个方法完全是为了强制设为0
+        :return: 同programming
+        """
+        # 这个有点麻烦，主要是non_domination和第一次递归的时候-1的问题，要把整体往后移一位就好了
+        # 目前情况的话，就要把第0位给空出来，全0
+        n = len(self.start_time)
+        for pos in range(n):
+            self.time[0][pos] = 0
+            self.time[pos][0] = 0
+        self.start_time[0] = 0
+        self.stay_time[0] = 0
+        self.end_time[0] = 0
+        self.arrive_time = [-1] * n  # -1表示没有走过的点
+        self.arrive_time[0] = 0
+        i = 0
+        # 先找出优先面，判断是否发生冲突
+        conflict, front = self.non_domination_sort(i)
+        if conflict:
+            return False, front
+
+        conflict, result = self.compute(i, front)
+        result.reverse()  # 因为是递归，答案是反的
+        return not conflict, result
+
     def programming(self):
         """
-        g''(x)的方式，其中门的位置为0
+        g1''(x)的方式，其中门的位置为0
         :return:
             0th:ok
             1th:不ok：[[a,b],[c,d]]，ab冲突，cd冲突（二维数组）
@@ -195,19 +224,9 @@ class Carnival:
         return yes
 
     def wrapper_result(self, result):
+        wrapper = []
 
-        wrapper = [{
-            'position': result[0],
-            'start_time': self.start_time[result[0]],
-            'end_time': self.end_time[result[0]],
-            'stay_time': self.stay_time[result[0]],
-            'arrive_time': self.arrive_time[result[0]],
-            'leave_time': self.end_time[result[0]],
-            'walk_time': 0,
-            'wait_time': 0
-        }]
-
-        for i in range(1, len(result)):
+        for i in range(len(result)):
             wrapper.append({
                 'position': result[i],
                 'start_time': self.start_time[result[i]],
@@ -215,7 +234,7 @@ class Carnival:
                 'stay_time': self.stay_time[result[i]],
                 'arrive_time': self.arrive_time[result[i]],
                 'leave_time': max(self.arrive_time[result[i]], self.start_time[result[i]]) + self.stay_time[result[i]],
-                'walk_time': self.time[result[i - 1]][result[i]],
+                'walk_time': 0 if i - 1 < 0 else self.time[result[i - 1]][result[i]],
                 'wait_time': max(0, self.start_time[result[i]] - self.arrive_time[result[i]])
             })
 
