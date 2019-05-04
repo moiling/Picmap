@@ -53,37 +53,9 @@ class Carnival:
         self.stay_time = stay_time
         self.end_time = end_time
 
-    # 可以删了的方法
-    def programming_without_start(self):
-        """
-        g1(x)的方式，没有出发点限制
-        这个方法可以没有，用户自己设置i=0的情况就好了，主要是time[0][:]=time[:][0]=全0，说明每一个点都可以成为门，即可
-        设这个方法完全是为了强制设为0
-        :return: 同programming
-        """
-        # 这个有点麻烦，主要是non_domination和第一次递归的时候-1的问题，要把整体往后移一位就好了
-        # 目前情况的话，就要把第0位给空出来，全0
-        n = len(self.start_time)
-        for pos in range(n):
-            self.time[0][pos] = 0
-            self.time[pos][0] = 0
-        self.start_time[0] = 0
-        self.stay_time[0] = 0
-        self.end_time[0] = 0
-        self.arrive_time = [-1] * n  # -1表示没有走过的点
-        self.arrive_time[0] = 0
-        i = 0
-        # 先找出优先面，判断是否发生冲突
-        conflict, front = self.non_domination_sort(i)
-        if conflict:
-            return False, front
-
-        conflict, result = self.compute(i, front)
-        result.reverse()  # 因为是递归，答案是反的
-        return not conflict, result
-
     def programming(self):
         """
+        g1(x)的方式，没有出发点限制，用户自己设置i=0的情况就好了，主要是time[0][:]=time[:][0]=全0，说明每一个点都可以成为门，即可
         g1''(x)的方式，其中门的位置为0
         :return:
             0th:ok
@@ -223,10 +195,16 @@ class Carnival:
                 break
         return yes
 
-    def wrapper_result(self, result):
+    def wrapper_result(self, result, with_zero=True):
+        """
+        包装结果，返回各个点的顺序，以及相关时间
+        :param result: 结果序列
+        :param with_zero: 是否返回第0位信息
+        :return:
+        """
         wrapper = []
 
-        for i in range(len(result)):
+        for i in range(0 if with_zero else 1, len(result)):
             wrapper.append({
                 'position': result[i],
                 'start_time': self.start_time[result[i]],
@@ -239,3 +217,26 @@ class Carnival:
             })
 
         return wrapper
+
+    def all_use_time(self, result, with_zero=True):
+        """
+        计算总行程消耗时间
+        :param result: 结果序列
+        :param with_zero: 是否计算第0位信息
+        :return:
+        """
+        last_leave_time = max(self.arrive_time[result[-1]], self.start_time[result[-1]]) + self.stay_time[result[-1]]
+        first_arrive_time = self.arrive_time[result[0] if with_zero else result[1]]
+        return last_leave_time - first_arrive_time
+
+    def all_wait_time(self, result):
+        wait_time = 0
+        for i in range(len(result)):
+            wait_time += max(0, self.start_time[result[i]] - self.arrive_time[result[i]])
+        return wait_time
+
+    def all_walk_time(self, result):
+        walk_time = 0
+        for i in range(1, len(result)):
+            walk_time += self.time[result[i - 1]][result[i]]
+        return walk_time
