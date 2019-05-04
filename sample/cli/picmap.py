@@ -3,8 +3,10 @@
 # @Time    : 2019-05-03 19:38
 # @Author  : moiling
 # @File    : picmap.py
-
 import argparse
+import sys
+sys.path.append('../')
+sys.path.append('../../')
 from cli import *
 
 

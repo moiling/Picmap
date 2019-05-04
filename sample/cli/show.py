@@ -4,7 +4,7 @@
 # @Author  : moiling
 # @File    : show.py
 
-from model import exif
+from libPicmap import exif
 
 
 def init(parser):

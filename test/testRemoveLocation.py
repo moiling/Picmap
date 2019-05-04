@@ -3,7 +3,7 @@
 # @Time    : 2019-05-03 23:54
 # @Author  : moiling
 # @File    : testRemoveLocation.py
-from model import exif
+from libPicmap import exif
 
 jpgWithLocation = '/Users/moi/Downloads/74499914_p0.jpg'
 

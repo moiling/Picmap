@@ -5,7 +5,7 @@
 # @File    : testCarnivalProgramming.py
 import json
 
-from model.carnivalProgramming import Carnival
+from libPicmap.carnivalProgramming import Carnival
 
 
 def test_programming():

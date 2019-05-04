@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtGui
 
 from const import api
-from model import exif
-from source.ui.mainWindow import Ui_MainWindow
+from libPicmap import exif
+from gui.ui.mainWindow import Ui_MainWindow
 
 
 class MainWindow(Ui_MainWindow, QMainWindow):
