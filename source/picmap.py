@@ -17,7 +17,7 @@ def _init_subparsers(parent):
 
     parser_clone = subparsers.add_parser(
         'clone',
-        help='Clone a picture\'s exif information into a new picture'
+        help='Clone a picture\'s location information into a new picture'
     )
 
     clone.init(parser_clone)
@@ -25,11 +25,27 @@ def _init_subparsers(parent):
 
     parser_show = subparsers.add_parser(
         'show',
-        help='Show a picture\'s exif information'
+        help='Show a picture\'s location information'
     )
 
     show.init(parser_show)
     parser_show.set_defaults(func=show.parse)
+
+    parser_clear = subparsers.add_parser(
+        'clear',
+        help='Clear a picture\'s location information'
+    )
+
+    clear.init(parser_clear)
+    parser_clear.set_defaults(func=clear.parse)
+
+    parser_add = subparsers.add_parser(
+        'add',
+        help='Add location information to the picture'
+    )
+
+    add.init(parser_add)
+    parser_add.set_defaults(func=add.parse)
 
 
 def _parse_args():

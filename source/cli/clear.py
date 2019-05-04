@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 2019-05-03 19:54
+# @Time    : 2019-05-04 00:29
 # @Author  : moiling
-# @File    : clone.py
+# @File    : clear.py
 from model import exif
 
 
@@ -11,12 +11,8 @@ def init(parser):
         'input',
         help='input picture url',
     )
-    parser.add_argument(
-        'output',
-        help='output picture url',
-    )
 
 
 def parse(args):
-    success, info = exif.transplant_location(args.input, args.output)
+    success, info = exif.remove_location(args.input)
     print(info)

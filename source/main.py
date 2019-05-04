@@ -21,7 +21,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         evn.accept()
 
     def dropEvent(self, evn: QtGui.QDropEvent):
-        img_url = evn.mimeData().text()[7:]
+        file_url = evn.mimeData().text()
+        if file_url[:7] != 'file://':
+            # TODO 显示失败原因在界面上
+            return
+        if file_url[9] == ':':
+            # file:///C:,第9位是:的大概就是windows了
+            img_url = evn.mimeData().text()[8:]
+        else:
+            img_url = evn.mimeData().text()[7:]
 
         # 显示图片
         pixmap = QPixmap(img_url)

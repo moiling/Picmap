@@ -1,1 +1,1 @@
-__all__ = ['clone', 'show']
+__all__ = ['clone', 'show', 'clear', 'add']
