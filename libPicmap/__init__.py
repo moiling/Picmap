@@ -1,1 +1,1 @@
-__all__ = ['carnivalProgramming', 'exif']
+__all__ = ['carnivalProgramming', 'exif', 'const']

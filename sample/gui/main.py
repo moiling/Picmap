@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtGui
 
-from const import api
-from libPicmap import exif
+from libPicmap.const import *
+from libPicmap import *
 from gui.ui.mainWindow import Ui_MainWindow
 
 
