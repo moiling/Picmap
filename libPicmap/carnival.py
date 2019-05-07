@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2019-05-04 01:36
 # @Author  : moiling
-# @File    : carnivalProgramming.py
+# @File    : carnival.py
 
 """
 游乐园路径规划问题

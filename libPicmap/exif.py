@@ -182,7 +182,7 @@ class Exif:
         return self.set_comment(converter.rebuild_pic_time(start_time, stay_time, end_time))
 
     def set_comment(self, comment):
-        if not self.has_exif_info():
+        if not self.has_info():
             return False
 
         user_comment = piexif.helper.UserComment.dump(comment)
@@ -191,13 +191,11 @@ class Exif:
         return True
 
     def set_location(self, location):
-        longitude_str, latitude_str = location.split(',')
-        longitude = float(longitude_str.strip())
-        latitude = float(latitude_str.strip())
+        longitude, latitude = converter.str2location(location)
         return self.set_longitude_latitude(longitude, latitude)
 
     def set_longitude_latitude(self, longitude, latitude):
-        if not self.has_gps_info():
+        if not self.has_info():
             return False
 
         self.exif["GPS"][piexif.GPSIFD.GPSLongitude] = converter.rebuild_location(longitude)

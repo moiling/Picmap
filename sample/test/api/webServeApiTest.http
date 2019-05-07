@@ -14,11 +14,11 @@
 # Accept: application/json
 
 ## 步行规划，同样还有其他出行方式（可以获得时间和距离）
-# GET https://restapi.amap.com/v3/direction/walking?origin=116.434307,39.90909&destination=116.434446,39.90816&key=c35692f8b41d4c3444ad3a321e4fe474
-# Accept: application/json
+GET https://restapi.amap.com/v3/direction/walking?origin=113.324153,23.127072&destination=113.378827,23.12502&key=c35692f8b41d4c3444ad3a321e4fe474
+Accept: application/json
 
 ## 输入提示
-GET https://restapi.amap.com/v3/assistant/inputtips?keywords=华南理工&key=c35692f8b41d4c3444ad3a321e4fe474
-Accept: application/json
+# GET https://restapi.amap.com/v3/assistant/inputtips?keywords=华南理工&key=c35692f8b41d4c3444ad3a321e4fe474
+# Accept: application/json
 
 ###

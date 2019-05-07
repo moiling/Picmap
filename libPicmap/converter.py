@@ -3,6 +3,49 @@
 # @Time    : 2019-05-07 19:06
 # @Author  : moiling
 # @File    : converter.py
+import json
+
+
+def parse_api_route(info):
+    """
+    {
+      "status": "1",
+      "info": "ok",
+      "infocode": "10000",
+      "count": "1",
+      "route": {
+        "origin": "116.434307,39.90909",
+        "destination": "116.434446,39.90816",
+        "paths": [
+          {
+            "distance": "217",
+            "duration": "174",
+
+    :param info:
+    :return: duration
+    """
+    info = json.loads(info)
+    return round(float(info['route']['paths'][0]['duration']) / 60)
+
+
+def location2str(location):
+    if type(location) is not str:
+        location = build_location_str(location)
+    return location
+
+
+def str2location(location_str):
+    if type(location_str) is not str:
+        return location_str
+
+    longitude_str, latitude_str = location_str.split(',')
+    longitude = float(longitude_str.strip())
+    latitude = float(latitude_str.strip())
+    return longitude, latitude
+
+
+def build_location_str(location):
+    return str(location[0]) + ',' + str(location[1])
 
 
 def parse_location(info) -> float:

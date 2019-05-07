@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2019-05-04 15:30
 # @Author  : moiling
-# @File    : testCarnivalProgramming.py
+# @File    : testCarnival.py
 import json
 
-from libPicmap.carnivalProgramming import Carnival
+from libPicmap.carnival import Carnival
 
 
 def test_programming():
