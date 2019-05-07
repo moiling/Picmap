@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtGui
 
+from exif import Exif
 from libPicmap.const import *
 from libPicmap import *
 from gui.ui.mainWindow import Ui_MainWindow
@@ -37,18 +38,18 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.imgLabel.setPixmap(pixmap)
 
         # 读Exif信息
-        success, data = exif.pic2exif(img_url)
+        e = Exif(img_url)
 
-        if not success:
+        if not e.succeed:
             # TODO 显示失败原因在界面上
             return
 
         # 显示所有Exif信息
-        self.textLabel.setText(exif.exif2str(data))
+        self.textLabel.setText(e.__str__())
 
-        success, longitude, latitude = exif.get_location_from_exif(data)
+        longitude, latitude = e.location()
 
-        if not success:
+        if not e.succeed:
             # TODO 显示失败原因在界面上
             return
 

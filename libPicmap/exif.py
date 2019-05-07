@@ -4,149 +4,241 @@
 # @Author  : moiling
 # @File    : exif.py
 import piexif
+import piexif.helper
 from PIL import Image
 
-
-def pic2location(url):
-    """
-    :param url: picture url
-    :return:
-        0th: read exif succeed
-        1th: if read succeed, return longitude, else return error information
-        2th: if read succeed, return latitude, else None
-    """
-    succeed, data = pic2exif(url)
-    if not succeed:
-        return False, data, None
-
-    return get_location_from_exif(data)
+import converter
 
 
-def get_location_from_exif(exif):
-    # 检查是否有location信息
-    if exif["GPS"] == {}:
-        return False, 'no location information in exif', None
+class Exif:
 
-    # 转换经纬度为经纬坐标，["GPS"][4]为经度元组，["GPS"][2]为维度元组，在_exif.py中有标明，按住ctrl点进piexif.TAGS可以进去看
-    longitude = parse_location(exif["GPS"][4])
-    latitude = parse_location(exif["GPS"][2])
+    def __init__(self, url):
+        self.url = url
+        self.exif = None
+        self.error_info = None
+        self.succeed = False
 
-    return True, longitude, latitude
+        self.__exif(url)
 
+    def __exif(self, url):
+        # 检查是否是jpeg
+        if self.is_jpeg(url):
+            # 读exif
+            self.exif = piexif.load(url)
+            self.has_info()
 
-def pic2exif(url):
-    """
-    :param url: picture url
-    :return:
-        0th: read exif succeed
-        1th: if read succeed, return exif dict, else return error information
-    """
-    # 检查是否是jpeg
-    if not is_jpeg(url):
-        return False, 'not a jpeg'
+    def location(self):
+        """
+        :return:
+            0th: longitude
+            1th: latitude
+        """
+        # 检查是否有location信息
+        if not self.has_gps_info():
+            return None, None
 
-    # 读Exif信息
-    exif_dict = piexif.load(url)
+        longitude = converter.parse_location(self.exif["GPS"][piexif.GPSIFD.GPSLongitude])
+        latitude = converter.parse_location(self.exif["GPS"][piexif.GPSIFD.GPSLatitude])
+        self.succeed = True
+        return longitude, latitude
 
-    if exif_dict is not None:
-        return True, exif_dict
-    else:
-        return False, 'exif is none'
+    def pic_time(self):
+        comment = self.comment()
+        if not self.succeed:
+            return None, None, None
 
+        return converter.parse_pic_time(comment)
 
-def exif2str(exif):
-    show_str = ""
-    for ifd in ("0th", "Exif", "GPS", "1st"):
-        for tag in exif[ifd]:
-            show_str += piexif.TAGS[ifd][tag]["name"] + str(exif[ifd][tag]) + "\n"
-    return show_str
+    def comment(self):
+        if not self.has_exif_info():
+            return None
 
+        try:
+            user_comment = piexif.helper.UserComment.load(self.exif["Exif"][piexif.ExifIFD.UserComment])
+        except KeyError:
+            self.error_info = 'no user comment information'
+            self.succeed = False
+            return None
 
-def transplant_all_exif(input_url, output_url):
-    # 检查是否是jpeg
-    if not is_jpeg(input_url):
-        return False, input_url + 'is not a jpeg'
-    if not is_jpeg(output_url):
-        return False, output_url + 'is not a jpeg'
+        if user_comment == '':
+            self.error_info = 'no user comment information'
+            self.succeed = False
+            return None
 
-    piexif.transplant(input_url, output_url)
-    return True, 'succeed'
+        self.succeed = True
+        return user_comment
 
+    def __str__(self):
+        show_str = ""
+        for ifd in ("0th", "Exif", "GPS", "1st"):
+            for tag in self.exif[ifd]:
+                show_str += piexif.TAGS[ifd][tag]["name"] + str(self.exif[ifd][tag]) + "\n"
+        self.succeed = True
+        return show_str
 
-def remove_all_exif(url):
-    piexif.remove(url)
+    def save(self):
+        return self.save_to(self.url)
 
+    def save_to(self, url):
+        if not self.is_jpeg(url):
+            return False
 
-def remove_location(url):
-    success, data = pic2exif(url)
-    if not success:
-        return False, data
+        piexif.insert(piexif.dump(self.exif), url)
+        self.succeed = True
+        return True
 
-    data['GPS'] = {}
-    piexif.insert(piexif.dump(data), url)
-    return True, 'succeed'
+    def save_location(self):
+        return self.save_location_to(self.url)
 
+    def save_location_to(self, url_out):
+        exif_out = Exif(url_out)
+        data_out = exif_out.exif
+        if not exif_out.succeed:
+            self.succeed = False
+            self.error_info = exif_out.error_info
+            return False
 
-def insert_location(url, location):
-    longitude_str, latitude_str = location.split(',')
-    longitude = float(longitude_str)
-    latitude = float(latitude_str)
-    return insert_longitude_latitude(url, longitude, latitude)
+        if not self.has_gps_info():
+            return False
 
+        data_out["GPS"] = self.exif['GPS']
 
-def insert_longitude_latitude(url, longitude, latitude):
-    success, data = pic2exif(url)
-    if not success:
-        return False, data
-    data["GPS"][4] = rebuild_location(longitude)
-    data["GPS"][2] = rebuild_location(latitude)
+        return exif_out.save_to(url_out)
 
-    piexif.insert(piexif.dump(data), url)
-    return True, 'succeed'
+    def save_comment(self):
+        return self.save_location_to(self.url)
 
+    def save_comment_to(self, url_out):
+        exif_out = Exif(url_out)
+        if not exif_out.succeed:
+            self.succeed = False
+            self.error_info = exif_out.error_info
+            return False
 
-def transplant_location(input_url, output_url):
-    success, data_in = pic2exif(input_url)
-    if not success:
-        return False, data_in
-    success, data_out = pic2exif(output_url)
-    if not success:
-        return False, data_out
+        comment = self.comment()
+        if not self.succeed:
+            self.succeed = False
+            self.error_info = exif_out.error_info
+            return False
 
-    if data_in["GPS"] == {}:
-        return False, input_url + 'is no location information in exif'
+        exif_out.set_comment(comment)
+        return exif_out.save_to(url_out)
 
-    data_out["GPS"] = data_in['GPS']
+    def transplant_comment(self, exif_out) -> bool:
+        comment = self.comment()
+        if not self.succeed:
+            return False
 
-    piexif.insert(piexif.dump(data_out), output_url)
-    return True, 'succeed'
+        return exif_out.set_comment(comment)
 
+    def transplant_location(self, exif_out) -> bool:
+        if not self.has_gps_info():
+            return False
+        if not exif_out.has_info():
+            return False
 
-def is_jpeg(url) -> bool:
-    try:
-        i = Image.open(url)
-        return i.format == 'JPEG'
-    except IOError:
-        return False
+        exif_out.exif['GPS'] = self.exif['GPS']
+        self.succeed = True
+        return True
 
+    @staticmethod
+    def transplant(input_url, output_url):
+        try:
+            piexif.transplant(input_url, output_url)
+            return True
+        except ValueError:
+            return False
 
-def parse_location(info) -> float:
-    """
-    将exif中时分秒的地址格式转换为小数格式
-    :param info: 单独的longitude或latitude时分秒格式（元组）
-    :return: 转换后的小数格式（float）
-    """
-    return (info[0][0]) / (info[0][1]) + (info[1][0]) / (info[1][1]) / 60 + (info[2][0]) / (info[2][1]) / 3600
+    @staticmethod
+    def remove_all_and_save(url):
+        piexif.remove(url)
 
+    def remove_all(self):
+        self.exif = {'0th': {}, 'Exif': {}, 'GPS': {}, 'Interop': {}, '1st': {}, 'thumbnail': None}
+        self.succeed = True
+        return True
 
-def rebuild_location(info):
-    """
-    将小数位的location信息重新转化成exif所需的时分秒格式
-    :param info: 单独的longitude或latitude的小数格式（float）
-    :return: 转换后的时分秒格式（元组）
-    """
-    hours = int(info)
-    minutes = int((info - hours) * 60)
-    seconds = int(((info - hours) * 60 - minutes) * 60 * 10000)
-    result = ((hours, 1), (minutes, 1), (seconds, 10000))
-    return result
+    def remove_location(self):
+        if not self.has_info():
+            return False
+
+        self.exif['GPS'] = {}
+        self.succeed = True
+        return True
+
+    def remove_comment(self):
+        if not self.has_exif_info():
+            return False
+
+        user_comment = piexif.helper.UserComment.dump('')
+        self.exif['Exif'][piexif.ExifIFD.UserComment] = user_comment
+        self.succeed = True
+        return True
+
+    def set_pic_time_by_str(self, start_time, stay_time, end_time):
+        return self.set_comment(converter.rebuild_pic_time_by_str(start_time, stay_time, end_time))
+
+    def set_pic_time(self, start_time, stay_time, end_time):
+        return self.set_comment(converter.rebuild_pic_time(start_time, stay_time, end_time))
+
+    def set_comment(self, comment):
+        if not self.has_exif_info():
+            return False
+
+        user_comment = piexif.helper.UserComment.dump(comment)
+        self.exif['Exif'][piexif.ExifIFD.UserComment] = user_comment
+        self.succeed = True
+        return True
+
+    def set_location(self, location):
+        longitude_str, latitude_str = location.split(',')
+        longitude = float(longitude_str.strip())
+        latitude = float(latitude_str.strip())
+        return self.set_longitude_latitude(longitude, latitude)
+
+    def set_longitude_latitude(self, longitude, latitude):
+        if not self.has_gps_info():
+            return False
+
+        self.exif["GPS"][piexif.GPSIFD.GPSLongitude] = converter.rebuild_location(longitude)
+        self.exif["GPS"][piexif.GPSIFD.GPSLatitude] = converter.rebuild_location(latitude)
+
+        self.succeed = True
+        return True
+
+    def has_info(self) -> bool:
+        if self.exif is None or self.exif == {}:
+            self.succeed = False
+            self.error_info = 'no exif'
+            return False
+        else:
+            self.succeed = True
+            return True
+
+    def has_gps_info(self) -> bool:
+        if self.exif is None or self.exif == {} or self.exif['GPS'] == {}:
+            self.succeed = False
+            self.error_info = 'input is no location information in exif'
+            return False
+        else:
+            self.succeed = True
+            return True
+
+    def has_exif_info(self) -> bool:
+        if self.exif is None or self.exif == {} or self.exif['Exif'] == {}:
+            self.error_info = 'no exif information'
+            self.succeed = False
+            return False
+        else:
+            self.succeed = True
+            return True
+
+    def is_jpeg(self, url) -> bool:
+        try:
+            i = Image.open(url)
+            self.succeed = True
+            return i.format == 'JPEG'
+        except IOError:
+            self.error_info = url + ' is not a jpeg'
+            self.succeed = False
+            return False
