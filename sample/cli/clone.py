@@ -3,7 +3,7 @@
 # @Time    : 2019-05-03 19:54
 # @Author  : moiling
 # @File    : clone.py
-from libPicmap import exif
+from exif import Exif
 
 
 def init(parser):
@@ -18,5 +18,4 @@ def init(parser):
 
 
 def parse(args):
-    success, info = exif.transplant_location(args.input, args.output)
-    print(info)
+    print(Exif.transplant(args.input, args.output))

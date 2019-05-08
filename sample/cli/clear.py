@@ -3,7 +3,7 @@
 # @Time    : 2019-05-04 00:29
 # @Author  : moiling
 # @File    : clear.py
-from libPicmap import exif
+from exif import Exif
 
 
 def init(parser):
@@ -14,5 +14,9 @@ def init(parser):
 
 
 def parse(args):
-    success, info = exif.remove_location(args.input)
-    print(info)
+    e = Exif(args.input)
+    e.remove_location()
+    if e.succeed:
+        print(e.succeed)
+    else:
+        print(e.error_info)

@@ -3,8 +3,7 @@
 # @Time    : 2019-05-03 20:29
 # @Author  : moiling
 # @File    : show.py
-
-from libPicmap import exif
+from exif import Exif
 
 
 def init(parser):
@@ -15,9 +14,10 @@ def init(parser):
 
 
 def parse(args):
-    success, longitude, latitude = exif.pic2location(args.input)
-    if success:
+    e = Exif(args.input)
+    longitude, latitude = e.location()
+    if e.succeed:
         print('Location is {},{}'.format(longitude, latitude))
     else:
-        print('Error: ' + longitude)
+        print('Error: ' + e.error_info)
 

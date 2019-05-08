@@ -8,7 +8,6 @@ from PyQt5 import QtGui
 
 from exif import Exif
 from libPicmap.const import *
-from libPicmap import *
 from gui.ui.mainWindow import Ui_MainWindow
 
 
