@@ -234,9 +234,9 @@ class Exif:
     def is_jpeg(self, url) -> bool:
         try:
             i = Image.open(url)
-            self.succeed = True
-            return i.format == 'JPEG'
+            self.succeed = i.format == 'JPEG'
+            return self.succeed
         except IOError:
-            self.error_info = url + ' is not a jpeg'
+            self.error_info = url + ' open failed'
             self.succeed = False
             return False

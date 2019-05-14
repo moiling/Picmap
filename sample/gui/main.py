@@ -32,9 +32,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             img_url = evn.mimeData().text()[7:]
 
         # 显示图片
-        pixmap = QPixmap(img_url)
-        pixmap = pixmap.scaled(200, 300)
-        self.imgLabel.setPixmap(pixmap)
+        pix = QPixmap(img_url)
+        if pix.width() is not 0:
+            pix = pix.scaled(200, int(pix.height() / pix.width() * 200))
+
+        self.imgLabel.setPixmap(pix)
 
         # 读Exif信息
         e = Exif(img_url)
