@@ -12,3 +12,8 @@ from const import api
 def find_route(way, origin, destination):
     req = urllib.request.urlopen(api.get_route_url(way, origin, destination))
     return converter.parse_api_route(req.read().decode())
+
+
+def re_geocode(longitude, latitude):
+    req = urllib.request.urlopen(api.get_geocode_url(str(longitude) + ',' + str(latitude)))
+    return converter.parse_api_geocode(req.read().decode())

@@ -28,6 +28,13 @@ def parse_api_route(info):
     return round(float(info['route']['paths'][0]['duration']) / 60)
 
 
+def parse_api_geocode(info):
+    info = json.loads(info)
+
+    return info['regeocode']['addressComponent']['country'], info['regeocode']['addressComponent']['province'],\
+           info['regeocode']['addressComponent']['city']
+
+
 def location2str(location):
     if type(location) is not str:
         location = build_location_str(location)

@@ -15,7 +15,12 @@ BICYCLING = 'bicycling'
 TRUCK = 'truck'
 
 route_url = 'https://restapi.amap.com/v3/direction/{}?origin={}&destination={}&key={}'
+geocode_url = 'https://restapi.amap.com/v3/geocode/regeo?location={}&key={}'
 
 
 def get_route_url(route_way, origin, destination, key=web_serve_key):
     return route_url.format(route_way, origin, destination, key)
+
+
+def get_geocode_url(location, key=web_serve_key):
+    return geocode_url.format(location, key)
