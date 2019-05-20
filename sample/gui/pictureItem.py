@@ -20,6 +20,7 @@ class PictureItem(Ui_Form, QWidget):
         super().__init__()
         self.setupUi(self)
 
+        self.url = url
         self.main_window = main_window
 
         pix = QPixmap(url)
@@ -32,11 +33,12 @@ class PictureItem(Ui_Form, QWidget):
 
         self.label.clicked.connect(lambda: self.main_window.show_pic_details(url))
         self.label.doubleClicked.connect(lambda: self.show_picture(url))
+        self.checkBox.toggled.connect(lambda: self.main_window.select_pic(url, self.checkBox.isChecked()))
 
     windowList = []
     @pyqtSlot()
     def show_picture(self, url):
         the_window = PictureDetailWindow(url)
         self.windowList.append(the_window)
-        the_window.closed.connect(self.main_window.refresh)
+        the_window.closed.connect(lambda: self.main_window.refresh(self.url))
         the_window.show()
