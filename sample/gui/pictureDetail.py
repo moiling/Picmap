@@ -5,10 +5,10 @@
 # @File    : pictureDetail.py
 import os
 
-from PyQt5 import QtGui, Qt
+from PyQt5 import QtGui
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtWidgets import QMainWindow, QDialog
+from PyQt5.QtWidgets import QMainWindow, QDialog, QMessageBox
 
 from const import api
 from exif import Exif
@@ -60,13 +60,13 @@ class PictureDetailWindow(Ui_MainWindow, QMainWindow):
         self.exif = Exif(url)
 
         if not self.exif.succeed:
-            # TODO 显示失败原因在界面上
+            QMessageBox.warning(self, "错误", self.exif.error_info, QMessageBox.Yes, QMessageBox.Yes)
             return
 
         self.longitude, self.latitude = self.exif.location()
 
         if not self.exif.succeed:
-            # TODO 显示失败原因在界面上
+            QMessageBox.warning(self, "错误", self.exif.error_info, QMessageBox.Yes, QMessageBox.Yes)
             return
 
         self.channel = QWebChannel()  # 增加一个通信中需要用到的频道

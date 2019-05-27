@@ -15,7 +15,7 @@ from gui.multiRoute import MultiRouteWindow
 from gui.sortListItem import SortListItem
 from gui.ui.mainWindow import Ui_MainWindow
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtGui
 
@@ -48,7 +48,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return
 
             if file_url[:7] != 'file://':
-                # TODO 显示失败原因在界面上
+                QMessageBox.warning(self, "错误", '拖入的不是文件', QMessageBox.Yes, QMessageBox.Yes)
                 return
             if file_url[9] == ':':
                 # file:///C:,第9位是:的大概就是windows了
@@ -63,20 +63,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.pic_list.append(pic)
             self.showPic(pic)
 
-    @staticmethod
-    def loadLocation(url):
+    def loadLocation(self, url):
 
         # 读Exif信息
         e = Exif(url)
 
         if not e.succeed:
-            # TODO 显示失败原因在界面上
+            QMessageBox.warning(self, "错误", e.error_info, QMessageBox.Yes, QMessageBox.Yes)
             return False
 
         longitude, latitude = e.location()
 
         if not e.succeed:
-            # TODO 显示失败原因在界面上
+            QMessageBox.warning(self, "错误", e.error_info, QMessageBox.Yes, QMessageBox.Yes)
             return False
 
         # 转换成地点信息

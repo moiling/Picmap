@@ -12,14 +12,12 @@
 import json
 import os
 
-from PyQt5 import QtGui, Qt
-from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSlot
 from PyQt5.QtWebChannel import QWebChannel
-from PyQt5.QtWidgets import QMainWindow, QDialog
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
 import apiRequest
 import route
-from const import api
 from exif import Exif
 from gui.ui.multiRouteWindow import Ui_MainWindow
 
@@ -88,25 +86,20 @@ class MultiRouteWindow(Ui_MainWindow, QMainWindow):
             o, r, use, wait, walk = route.programming_by_all_pic(
                 self.urls
             )
-            if o:
-                json_str = json.dumps(r, indent=1)
-                print('Succeed', json_str)
-
-            else:
-                print('Failed', r)
+            if not o:
+                QMessageBox.warning(self, "错误", r, QMessageBox.Yes, QMessageBox.Yes)
+                return
         else:
             if self.start_location is not None:
                 o, r, use, wait, walk = route.programming_by_pic_start(
                     self.urls,
                     (self.start_location, int(self.startTimeEdit.text()), 0, int(self.startTimeEdit.text())),
                 )
-                if o:
-                    json_str = json.dumps(r, indent=1)
-                    print('Succeed', json_str)
-                else:
-                    print('Failed', r)
+                if not o:
+                    QMessageBox.warning(self, "错误", r, QMessageBox.Yes, QMessageBox.Yes)
+                    return
             else:
-                # TODO 错误信息
+                QMessageBox.warning(self, "错误", '未设置出发点', QMessageBox.Yes, QMessageBox.Yes)
                 return
 
         self.hintLabel.setText('总耗时：' + str(use) + '分钟，总等待时间：' + str(wait) + '分钟，总路程时间：' + str(walk) + '分钟')
@@ -185,13 +178,13 @@ class MultiRouteWindow(Ui_MainWindow, QMainWindow):
             exif = Exif(url)
 
             if not exif.succeed:
-                # TODO 显示失败原因在界面上
+                QMessageBox.warning(self, "错误", exif.error_info, QMessageBox.Yes, QMessageBox.Yes)
                 return
 
             longitude, latitude = exif.location()
 
             if not exif.succeed:
-                # TODO 显示失败原因在界面上
+                QMessageBox.warning(self, "错误", exif.error_info, QMessageBox.Yes, QMessageBox.Yes)
                 return
 
             js_string = '''
