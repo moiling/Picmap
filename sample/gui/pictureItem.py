@@ -9,8 +9,8 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget
 
-from gui.pictureDetail import PictureDetailWindow
-from gui.ui.pictureItemWindow import Ui_Form
+from sample.gui.pictureDetail import PictureDetailWindow
+from sample.gui.ui.pictureItemWindow import Ui_Form
 
 
 class PictureItem(Ui_Form, QWidget):
@@ -36,6 +36,7 @@ class PictureItem(Ui_Form, QWidget):
         self.checkBox.toggled.connect(lambda: self.main_window.select_pic(url, self.checkBox.isChecked()))
 
     windowList = []
+
     @pyqtSlot()
     def show_picture(self, url):
         the_window = PictureDetailWindow(url)

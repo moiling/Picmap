@@ -7,13 +7,13 @@ import os
 import sys
 import time
 
-import apiRequest
+from libPicmap import apiRequest
 
-from exif import Exif
-from gui.bean.pic import Pic
-from gui.multiRoute import MultiRouteWindow
-from gui.sortListItem import SortListItem
-from gui.ui.mainWindow import Ui_MainWindow
+from libPicmap.exif import Exif
+from sample.gui.bean.pic import Pic
+from sample.gui.multiRoute import MultiRouteWindow
+from sample.gui.sortListItem import SortListItem
+from sample.gui.ui.mainWindow import Ui_MainWindow
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtWidgets import QMainWindow

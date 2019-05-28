@@ -7,7 +7,7 @@ import argparse
 import sys
 sys.path.append('../')
 sys.path.append('../../')
-from cli import *
+from sample.cli import *
 
 
 def _init_subparsers(parent):

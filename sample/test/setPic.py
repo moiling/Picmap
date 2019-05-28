@@ -3,7 +3,7 @@
 # @Time    : 2019-05-07 23:04
 # @Author  : moiling
 # @File    : setPic.py
-from exif import Exif
+from libPicmap.exif import Exif
 
 start_pic_url = './pic/start.jpg'
 a_pic_url = './pic/a.jpg'

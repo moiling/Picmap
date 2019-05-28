@@ -9,17 +9,18 @@
 # @Time    : 2019-05-20 01:43
 # @Author  : moiling
 # @File    : pictureDetail.py
-import json
+
 import os
+import sys
 
 from PyQt5.QtCore import QObject, pyqtSlot
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWidgets import QMainWindow, QMessageBox
 
-import apiRequest
-import route
-from exif import Exif
-from gui.ui.multiRouteWindow import Ui_MainWindow
+from libPicmap import apiRequest
+from libPicmap import route
+from libPicmap.exif import Exif
+from sample.gui.ui.multiRouteWindow import Ui_MainWindow
 
 
 class Callback(QObject):
@@ -56,6 +57,14 @@ class MultiRouteWindow(Ui_MainWindow, QMainWindow):
         self.callback = Callback(self)
         self.channel.registerObject('callback', self.callback)  # 将功能类注册到频道中，注册名可以任意，但将在网页中作为标识
 
+        # for py installer
+        if getattr(sys, 'frozen', False):
+            self.root_path = os.path.dirname(sys.executable)
+        elif __file__:
+            self.root_path = os.path.dirname(__file__)
+        else:
+            self.root_path = '.'
+
         self.loadHtml()
 
         self.startTimeEdit.setText(str(0))
@@ -71,7 +80,7 @@ class MultiRouteWindow(Ui_MainWindow, QMainWindow):
 
         # 加载js
         self.webEngineView.setHtml(
-            open(os.path.dirname(__file__) + '/resource/web/multiRoute.html', encoding='utf-8').read())
+            open(self.root_path + '/resource/web/multiRoute.html', encoding='utf-8').read())
 
         self.webEngineView.page().loadFinished.connect(self.show_location)
 

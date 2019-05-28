@@ -4,16 +4,17 @@
 # @Author  : moiling
 # @File    : pictureDetail.py
 import os
+import sys
 
 from PyQt5 import QtGui
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWidgets import QMainWindow, QDialog, QMessageBox
 
-from const import api
-from exif import Exif
-from gui.changeTimeDialog import ChangeTimeDialog
-from gui.ui.pictureDetailWindow import Ui_MainWindow
+from libPicmap.const import api
+from libPicmap.exif import Exif
+from sample.gui.changeTimeDialog import ChangeTimeDialog
+from sample.gui.ui.pictureDetailWindow import Ui_MainWindow
 
 
 class Callback(QObject):
@@ -73,6 +74,14 @@ class PictureDetailWindow(Ui_MainWindow, QMainWindow):
         self.callback = Callback(self)
         self.channel.registerObject('callback', self.callback)  # 将功能类注册到频道中，注册名可以任意，但将在网页中作为标识
 
+        # for py installer
+        if getattr(sys, 'frozen', False):
+            self.root_path = os.path.dirname(sys.executable)
+        elif __file__:
+            self.root_path = os.path.dirname(__file__)
+        else:
+            self.root_path = '.'
+
         self.loadHtml()
 
         self.goButton.clicked.connect(self.on_go_click)
@@ -100,7 +109,7 @@ class PictureDetailWindow(Ui_MainWindow, QMainWindow):
 
         # 加载js
         self.webEngineView.setHtml(
-            open(os.path.dirname(__file__) + '/resource/web/pictureDetail.html', encoding='utf-8')
+            open(self.root_path + '/resource/web/pictureDetail.html', encoding='utf-8')
             .read())
 
         self.webEngineView.page().loadFinished.connect(self.show_location)
@@ -108,8 +117,9 @@ class PictureDetailWindow(Ui_MainWindow, QMainWindow):
     @pyqtSlot()
     def show_around(self):
         self.webEngineView.load(QUrl(
-            'https://m.amap.com/around/?locations={},{}&keywords=美食,KTV,地铁站,公交站&defaultIndex=3&defaultView=&searchRadius=5000&key={}'
-                .format(self.longitude, self.latitude, api.url_api_key)))
+            'https://m.amap.com/around/?locations={},{}&keywords=美食,KTV,地铁站,'
+            '公交站&defaultIndex=3&defaultView=&searchRadius=5000&key={} '
+            .format(self.longitude, self.latitude, api.url_api_key)))
 
         self.is_show_around = True
 

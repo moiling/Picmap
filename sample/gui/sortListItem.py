@@ -6,8 +6,8 @@
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget
 
-from gui.pictureItem import PictureItem
-from gui.ui.sortListItemWindow import Ui_Form
+from sample.gui.pictureItem import PictureItem
+from sample.gui.ui.sortListItemWindow import Ui_Form
 
 
 class SortListItem(Ui_Form, QWidget):

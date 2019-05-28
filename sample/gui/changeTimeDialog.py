@@ -5,7 +5,7 @@
 # @File    : changeTimeDialog.py
 from PyQt5.QtWidgets import QDialog
 
-from gui.ui.changeTimeDialogWindow import Ui_Dialog
+from sample.gui.ui.changeTimeDialogWindow import Ui_Dialog
 
 
 class ChangeTimeDialog(Ui_Dialog, QDialog):

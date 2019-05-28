@@ -7,7 +7,7 @@ import piexif
 import piexif.helper
 from PIL import Image
 
-import converter
+from libPicmap import converter
 
 
 class Exif:

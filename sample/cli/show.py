@@ -3,7 +3,7 @@
 # @Time    : 2019-05-03 20:29
 # @Author  : moiling
 # @File    : show.py
-from exif import Exif
+from libPicmap.exif import Exif
 
 
 def init(parser):
